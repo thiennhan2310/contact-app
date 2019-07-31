@@ -4,7 +4,8 @@
 1/ request - response 
 
 - add contact to list [x]
-- get contact detail
+- get contact detail [x]
+- search contact
 
 2/ request - stream
 - export list contact

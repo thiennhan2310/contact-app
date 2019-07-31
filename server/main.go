@@ -42,12 +42,35 @@ func (s *server) AddContact(ctx context.Context, req *c.AddContactReq) (*c.AddCo
 	return &c.AddContactRep{Message: "Success"}, nil
 }
 
-func (s *server) GetContact(ctx context.Context, in *c.GetContactReq) (*c.GetContactRep, error) {
-	query := fmt.Sprintf("Select id,name,phone from contact where id = %v", 1)
-	rep := new(c.GetContactRep)
+func (s *server) GetContact(ctx context.Context, in *c.GetContactReq) (*c.Contact, error) {
+	query := fmt.Sprintf("Select id,name,phone from contact where id = %v", in.Id)
+	rep := new(c.Contact)
 	row := db.QueryRow(query)
 	row.Scan(&rep.Id, &rep.Name, &rep.Phone)
 	return rep, nil
+}
+
+func (s *server) SearchContact(ctx context.Context, in *c.SearchContactReq) (*c.ContactList, error) {
+	query := fmt.Sprintf("Select id,name,phone from contact where name like '%%%v%%' ", in.Q)
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	contactList := new(c.ContactList)
+	for rows.Next() {
+		contact := new(c.Contact)
+		err := rows.Scan(&contact.Id, &contact.Name, &contact.Phone)
+
+		if err != nil {
+			return nil, err
+		}
+		contactList.Contact = append(contactList.Contact, contact)
+	}
+
+	return contactList, nil
 }
 
 func main() {
@@ -65,7 +88,7 @@ func main() {
 	defer db.Close()
 
 	s := grpc.NewServer()
-	c.RegisterContactServer(s, &server{})
+	c.RegisterContactServiceServer(s, &server{})
 	log.Println("Started grpc server")
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

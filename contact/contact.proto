@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-service Contact {
+service ContactService {
   rpc AddContact (AddContactReq) returns (AddContactRep);
-  rpc GetContact (GetContactReq) returns (GetContactRep);
+  rpc GetContact (GetContactReq) returns (Contact);
+  rpc SearchContact (SearchContactReq) returns (ContactList);
 }
 
 message AddContactReq {
@@ -18,8 +19,18 @@ message GetContactReq {
   int32 id = 1;
 }
 
-message GetContactRep {
+message Contact {
   string id = 1;
   string name = 2;
   string phone = 3;
+}
+
+message ContactList {
+  repeated Contact contact = 1;
+}
+
+message SearchContactReq {
+  string q = 1;
+  int32 limit = 2;
+  int32 page = 3;
 }

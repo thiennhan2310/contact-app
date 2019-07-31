@@ -42,7 +42,7 @@ func main() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	client := c.NewContactClient(conn)
+	client := c.NewContactServiceClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
@@ -51,9 +51,19 @@ func main() {
 	// if err != nil {
 	// 	log.Fatalf("could not greet: %v", err)
 	// }
-	r, err := client.GetContact(ctx, &c.GetContactReq{Id: 1})
+
+	// r, err := client.GetContact(ctx, &c.GetContactReq{Id: 1})
+	// if err != nil {
+	// 	log.Fatalf("could not greet: %v", err)
+	// }
+	// log.Printf("%s", r)
+
+	r, err := client.SearchContact(ctx, &c.SearchContactReq{Q: "a"})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("%s", r)
+
+	for _, contact := range r.Contact {
+		log.Printf("%v", contact)
+	}
 }
