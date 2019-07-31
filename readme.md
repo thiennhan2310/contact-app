@@ -8,13 +8,13 @@
 - [x] search contact
 
 2/ request - stream
-- export list contact
+- [ ] export list contact
 
 3/ stream - response
-- Import list contact
+- [ ] Import list contact
 
 4/ stream - stream
-- Auto complete contact  suggestion
+- [ ] Auto complete contact  suggestion
 
 
 1. Install protoc
